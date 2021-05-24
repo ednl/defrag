@@ -85,7 +85,7 @@ function setup()
     let divTitle = createDiv('Advent of Code 2017 Day 14: Disk Defragmentation');
     let divBits = createDiv('Bits: 0');
     divRegions = createDiv('Regions: 0');
-    let divLink = createDiv('<br /><a href="https://adventofcode.com/2017/day/14" target="_blank">puzzle</a> | <a href="https://github.com/ednl/defrag/blob/main/sketch.js" target="_blank">code on github</a> | <a href="https://twitter.com/ednl" target="_blank">twitter</a>');
+    let divLink = createDiv('<br /><a href="https://adventofcode.com/2017/day/14" target="_blank">puzzle</a> | <a href="https://github.com/ednl/defrag/blob/main/sketch.js" target="_blank">code</a> | <a href="https://ednl.github.io/" target="_blank">github</a> | <a href="https://twitter.com/ednl" target="_blank">twitter</a>');
     divTitle.style('font', 'bold 22px Verdana');
     divBits.style('font', '20px Verdana');
     divRegions.style('font', '20px Verdana');
