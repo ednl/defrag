@@ -179,7 +179,7 @@ function setup()
     const btnKey = createButton('Go');
     inpKey.parent(divKey);
     btnKey.parent(divKey);
-    btnKey.mousePressed(() => document.location = '?key=' + inpKey.value());
+    btnKey.mousePressed(() => document.location = '?key=' + encodeURIComponent(inpKey.value()));
     const divLink = createDiv(
         '<br />Links: <a href="https://adventofcode.com/2017/day/14" target="_blank">puzzle</a>'
         + ' | <a href="https://github.com/ednl/defrag/blob/main/sketch.js" target="_blank">code</a>'
