@@ -15,7 +15,12 @@ const BIT_DOING = 2;     // on the stack for processing in current region
 const BIT_DONE  = 3;     // colorised, all done
 
 // Global variables for step-wise updating
-let disk, row, col, regions, hue, stack, divBits, divRegions;
+let disk, row, col, regions, hue, stack, divBits, divRegions, inpKey;
+
+function setkey()
+{
+    document.location = '?key=' + encodeURIComponent(inpKey.value());
+}
 
 // Hashing function from AoC 2017 day 10
 // https://adventofcode.com/2017/day/10
@@ -170,30 +175,46 @@ function setup()
     const params = new URLSearchParams(document.location.search.substring(1));
     const key = params.get('key') ?? KEY;  // ES2020 nullish coalescing operator
 
+    // Create page elements
     createCanvas(DISKSIZE * GRIDSIZE, DISKSIZE * GRIDSIZE);
     const divTitle = createDiv('Advent of Code 2017 Day 14: Disk Defragmentation');
     divBits = createDiv('Part 1: bits on disk = 0');
     divRegions = createDiv('Part 2: connected regions = 0');
     const divKey = createDiv('Key: ');
-    const inpKey = createInput(key);
-    const btnKey = createButton('Go');
+    inpKey = createInput(key);
+    inpKey.id('inpKeyId');
     inpKey.parent(divKey);
+    const btnKey = createButton('Go');
     btnKey.parent(divKey);
-    btnKey.mousePressed(() => document.location = '?key=' + encodeURIComponent(inpKey.value()));
     const divLink = createDiv(
         '<br />Links: <a href="https://adventofcode.com/2017/day/14" target="_blank">puzzle</a>'
         + ' | <a href="https://github.com/ednl/defrag/blob/main/sketch.js" target="_blank">code</a>'
         + ' | <a href="https://ednl.github.io/" target="_blank">github</a>'
         + ' | <a href="https://twitter.com/ednl" target="_blank">twitter</a>');
+
+    // Style page elements
     divTitle.style('font', 'bold 20px Verdana');
     divTitle.style('color', '#fff');
     divBits.style('font', '20px Verdana');
     divRegions.style('font', '20px Verdana');
     divKey.style('font', '20px Verdana');
-    inpKey.style('font', '12px "Cascadia Code", monospace');
+    inpKey.style('font', '13px "Cascadia Code", monospace');
     inpKey.size(128);
     divLink.style('font', '14px Verdana');
 
+    // Input events
+    btnKey.mousePressed(setkey);
+    document.getElementById('inpKeyId').addEventListener('keyup', function(event) {
+        if (event.defaultPrevented) {
+            return;
+        }
+        const key = event.key || event.keyCode;
+        if (key === "Enter" || key === 13) {
+            setkey();
+        }
+    });
+
+    // Fill the grid
     part1(key);
 }
 
