@@ -15,11 +15,11 @@ const BIT_DOING = 2;     // on the stack for processing in current region
 const BIT_DONE  = 3;     // colorised, all done
 
 // Global variables for step-wise updating
-let disk, row, col, regions, hue, stack, divBits, divRegions, inpKey;
+let disk, row, col, regions, hue, stack, speedup, divBits, divRegions, inpKey;
 
 function setkey()
 {
-    document.location = '?key=' + encodeURIComponent(inpKey.value());
+    document.location = '?key=' + encodeURIComponent(inpKey.value()) + '&speedup=' + speedup;
 }
 
 // Hashing function from AoC 2017 day 10
@@ -120,10 +120,11 @@ function part1(key)
 }
 
 // Advent of Code 2017 day 14 part 2, single step
+// Returns whether part 2 is done (true/false)
 function part2_step()
 {
+    // First clear the whole stack = fill in one region with DFS algorithm
     if (stack.length) {
-        // Fill in one whole region with DFS algorithm
         while (stack.length) {
             // Get top cell from the stack (LIFO buffer)
             const {row: i, col: j} = stack.pop();  // destructuring assignment for objects
@@ -147,8 +148,10 @@ function part2_step()
                 disk[i + 1][j] = BIT_DOING;
             }
         }
-    } else if (row < DISKSIZE) {
-        // Find next separate region
+    }
+
+    // Then try to find next separate region
+    if (row < DISKSIZE) {
         while (row < DISKSIZE && disk[row][col] != BIT_TODO) {
             if (++col == DISKSIZE) {
                 col = 0;
@@ -165,8 +168,14 @@ function part2_step()
             if (++hue == MAXHUE) {
                 hue = 0;
             }
+            return true;  // there is more to do
         }
     }
+
+    // Nothing more to do
+    console.log('Part 2: connected regions = ' + regions);
+    noLoop();
+    return false;
 }
 
 function setup()
@@ -174,6 +183,14 @@ function setup()
     // Try getting key from URL query param, or else use default
     const params = new URLSearchParams(document.location.search.substring(1));
     const key = params.get('key') ?? KEY;  // ES2020 nullish coalescing operator
+    speedup = parseInt(params.get('speedup') ?? SPEEDUP);
+    if (isNaN(speedup)) {
+        speedup = SPEEDUP;
+    } else if (speedup < 1) {
+        speedup = 1;
+    } else if (speedup > 1000) {
+        speedup = 1000;
+    }
 
     // Create page elements
     createCanvas(DISKSIZE * GRIDSIZE, DISKSIZE * GRIDSIZE);
@@ -220,12 +237,7 @@ function setup()
 
 function draw()
 {
-    for (let loop = 0; loop < SPEEDUP; ++loop) {
-        part2_step();
-    }
-    if (stack.length == 0 && row == DISKSIZE) {
-        // Done
-        console.log('Part 2: connected regions = ' + regions);
-        noLoop();
-    }
+    let loop = speedup;
+    while (loop-- && part2_step())
+        ;
 }
