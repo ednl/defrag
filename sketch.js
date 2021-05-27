@@ -15,11 +15,13 @@ const BIT_DOING = 2;     // on the stack for processing in current region
 const BIT_DONE  = 3;     // colorised, all done
 
 // Global variables for step-wise updating
-let disk, row, col, regions, hue, stack, speedup, divBits, divRegions, inpKey;
+let disk, row, col, regions, hue, stack, speedup, blocksize, divBits, divRegions, inpKey;
 
 function setkey()
 {
-    document.location = '?key=' + encodeURIComponent(inpKey.value()) + '&speedup=' + speedup;
+    document.location = '?key=' + encodeURIComponent(inpKey.value())
+        + '&speedup=' + speedup
+        + '&fuse=' + (1 + blocksize - GRIDSIZE);
 }
 
 // Hashing function from AoC 2017 day 10
@@ -107,7 +109,7 @@ function part1(key)
         for (let j = 0; j < DISKSIZE; ++j) {
             const q = j * GRIDSIZE;
             if (disk[i][j] == 1) {
-                rect(q, p, GRIDSIZE - 1, GRIDSIZE - 1);
+                rect(q, p, blocksize, blocksize);
             }
         }
     }
@@ -129,7 +131,7 @@ function part2_step()
             // Get top cell from the stack (LIFO buffer)
             const {row: i, col: j} = stack.pop();  // destructuring assignment for objects
             disk[i][j] = BIT_DONE;
-            rect(j * GRIDSIZE, i * GRIDSIZE, GRIDSIZE - 1, GRIDSIZE - 1);
+            rect(j * GRIDSIZE, i * GRIDSIZE, blocksize, blocksize);
             // Check surrounding cells
             if (i > 0 && disk[i - 1][j] == BIT_TODO) {
                 stack.push({row: i - 1, col: j});
@@ -191,6 +193,8 @@ function setup()
     } else if (speedup > 1000) {
         speedup = 1000;
     }
+    const fuse = parseInt(params.get('fuse') ?? 0);
+    blocksize = isNaN(fuse) || !fuse ? GRIDSIZE - 1 : GRIDSIZE;
 
     // Create page elements
     createCanvas(DISKSIZE * GRIDSIZE, DISKSIZE * GRIDSIZE);
