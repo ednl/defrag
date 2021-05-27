@@ -216,7 +216,7 @@ function setup()
     divRegions.style('font', '20px Verdana');
     divKey.style('font', '20px Verdana');
     inpKey.style('font', '13px "Cascadia Code", monospace');
-    inpKey.size(150);
+    inpKey.size(200);
     divLink.style('font', '14px Verdana');
 
     // Input events
